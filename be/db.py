@@ -77,8 +77,8 @@ class TestDatabaseMethods(unittest.TestCase):
         user = create_user(username, password)
         self.assertEqual(user, {"id":1})
 
-        selected_user = select_user(user["id"])
-        self.assertEqual(selected_user, [{"id":1, "username":username, "password":password}])
+        selected_user = get_user(user["id"])
+        self.assertEqual(selected_user, {"id":1, "username":username})
 
     # def test_delete_user(self):
     #     reset_database()
