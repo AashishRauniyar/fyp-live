@@ -30,11 +30,35 @@ def create_user(username, password):
     return result.mappings().all()[0]
 
 
-# def delete_user(user_id):
-#     statement = text("DELETE FROM users WHERE id = :user_id RETURNING id")
-#     params = {"user_id": user_id}
-#     result = run_query(statement, params)
-#     return result.mappings().all()
+def get_user(id):
+    stmt = text("select id, username from users where id=:id")
+    params = {"id": id}
+    try:
+        result = run_query(stmt, params)
+    except:
+        raise
+    result = result.mappings().all()
+    return {} if len(result) == 0 else result[0]
+
+
+
+def get_users():
+    stmt = text("select id, username from users")
+    params = {}
+    result = run_query(stmt, params)
+    return result.mappings().all()
+
+def delete_user(user_id):
+    statement = text("DELETE FROM users WHERE id = :user_id RETURNING id")
+    params = {"user_id": user_id}
+    result = run_query(statement, params)
+    return result.mappings().all()
+
+def update_user(user_id, username, password):
+    statement = text("UPDATE users SET username = :username, password = :password WHERE id = :user_id RETURNING id")
+    params = {"user_id": user_id, "username": username, "password": password}
+    result = run_query(statement, params)
+    return result.mappings().all()
 
 class TestDatabaseMethods(unittest.TestCase):
 
@@ -45,6 +69,16 @@ class TestDatabaseMethods(unittest.TestCase):
         user = create_user(username, password)
         self.assertEqual(user, {"id":1})
 
+
+    def test_select_user(self):
+        reset_database()
+        username = "test_user_1"
+        password = "test_pass_1"
+        user = create_user(username, password)
+        self.assertEqual(user, {"id":1})
+
+        selected_user = select_user(user["id"])
+        self.assertEqual(selected_user, [{"id":1, "username":username, "password":password}])
 
     # def test_delete_user(self):
     #     reset_database()
