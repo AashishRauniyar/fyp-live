@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import db  # Assuming db.py handles the actual database operations
 
+
+
 def create_app():
     app = Flask(__name__)
 
@@ -9,6 +11,13 @@ def create_app():
 
     def failure(reason):
         return {"status": "failure", "data": reason}
+    
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,PATCH')
+        return response
 
     @app.route("/users", methods=["POST"])
     def create_user():

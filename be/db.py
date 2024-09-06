@@ -2,10 +2,16 @@ import unittest
 
 
 from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 def connect_to_db():
-    #postgressql is protocol field, psycopg2 is driver field, postgres is username, Aashish977$ is password, localhost is host, 5432 is port, fyp is database name
-    engine = create_engine("postgresql+psycopg2://postgres:Aashish977$@localhost:5432/fyp")
+    # Use environment variables for DB credentials
+    db_url = f"postgresql+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    engine = create_engine(db_url)
     return engine
 
 def run_query(stmt,params):
